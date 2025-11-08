@@ -113,7 +113,7 @@ def main():
 
     # 加载模型
     print("加载模型...")
-    model = YOLO('../models/runs/classify/train/weights/best.pt')
+    model = YOLO('../model/runs/classify/train/weights/best.pt')
     print("模型加载完成")
     print()
 
