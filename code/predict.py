@@ -21,6 +21,11 @@ import argparse
 import pandas as pd
 from pathlib import Path
 from ultralytics import YOLO
+import logging
+
+# 配置日志记录器
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 def load_category_mapping(csv_path):
@@ -73,14 +78,14 @@ def predict_images(model, img_dir, image_files, name_to_id):
                         'confidence': confidence
                     })
                 else:
-                    print(f"警告: '{english_name}' 未在映射表中找到 (文件: {filename})")
+                    logger.error(f"警告: '{english_name}' 未在映射表中找到 (文件: {filename})")
 
         except Exception as e:
-            print(f"错误: 预测 {filename} 失败 - {e}")
+            logger.error(f"错误: 预测 {filename} 失败 - {e}")
 
         # 显示进度
         if i % 100 == 0:
-            print(f"已处理 {i}/{len(image_files)} 张图片...")
+            logger.error(f"已处理 {i}/{len(image_files)} 张图片...")
 
     return predictions
 
@@ -95,44 +100,44 @@ def main():
 
     args = parser.parse_args()
 
-    print(f'测试集目录: {args.test_img_dir}')
-    print(f'输出文件: {args.output_path}')
+    logger.error(f'测试集目录: {args.test_img_dir}')
+    logger.error(f'输出文件: {args.output_path}')
 
-    print()
+    logger.error("")
 
     # 检查路径
     if not os.path.exists(args.test_img_dir):
-        print(f"错误: 测试集目录不存在: {args.test_img_dir}")
+        logger.error(f"错误: 测试集目录不存在: {args.test_img_dir}")
         return
 
     # 加载类别映射
-    print("加载类别映射...")
+    logger.error("加载类别映射...")
     name_to_id = load_category_mapping('../src/category_mapping.csv')
-    print(f"已加载 {len(name_to_id)} 个类别映射")
-    print()
+    logger.error(f"已加载 {len(name_to_id)} 个类别映射")
+    logger.error("")
 
     # 加载模型
-    print("加载模型...")
+    logger.error("加载模型...")
     model = YOLO('../model/runs/classify/train/weights/best.pt')
-    print("模型加载完成")
-    print()
+    logger.error("模型加载完成")
+    logger.error("")
 
     # 获取图片文件
-    print("扫描测试集目录...")
+    logger.error("扫描测试集目录...")
     image_files = get_image_files(args.test_img_dir)
 
     if not image_files:
-        print(f"错误: 在目录 {args.test_img_dir} 中未找到图片文件")
+        logger.error(f"错误: 在目录 {args.test_img_dir} 中未找到图片文件")
         return
 
-    print(f"找到 {len(image_files)} 张图片")
-    print()
+    logger.error(f"找到 {len(image_files)} 张图片")
+    logger.error("")
 
     # 批量预测
-    print("开始预测...")
+    logger.error("开始预测...")
     predictions = predict_images(model, args.test_img_dir, image_files, name_to_id)
-    print(f"预测完成，成功预测 {len(predictions)} 张图片")
-    print()
+    logger.error(f"预测完成，成功预测 {len(predictions)} 张图片")
+    logger.error("")
 
     # 保存结果
     results_df = pd.DataFrame(predictions)
@@ -141,19 +146,19 @@ def main():
     output_dir = os.path.dirname(args.output_path)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
-        print(f"创建输出目录: {output_dir}")
+        logger.error(f"创建输出目录: {output_dir}")
 
     results_df.to_csv(args.output_path, index=False)
-    print(f"预测结果已保存到: {args.output_path}")
-    print()
+    logger.error(f"预测结果已保存到: {args.output_path}")
+    logger.error("")
 
     # 显示统计信息
-    print("预测统计:")
-    print(f"  总图片数: {len(image_files)}")
-    print(f"  成功预测: {len(predictions)}")
-    print(f"  平均置信度: {results_df['confidence'].mean():.4f}")
-    print()
-    print("预测完成!")
+    logger.error("预测统计:")
+    logger.error(f"  总图片数: {len(image_files)}")
+    logger.error(f"  成功预测: {len(predictions)}")
+    logger.error(f"  平均置信度: {results_df['confidence'].mean():.4f}")
+    logger.error("")
+    logger.error("预测完成!")
 
 
 if __name__ == '__main__':

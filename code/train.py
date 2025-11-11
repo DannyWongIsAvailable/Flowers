@@ -6,4 +6,4 @@ if __name__ == '__main__':
     model = YOLO("yolo11x-cls.yaml").load("../model/yolo11x-cls.pt")  # build from YAML and transfer weights
 
     # Train the model
-    results = model.train(data="../datasets/flowers_cls", epochs=300, imgsz=160, batch=128)
+    results = model.train(data="../datasets/flowers_cls", epochs=300, imgsz=160, batch=64)
