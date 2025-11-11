@@ -20,6 +20,9 @@ import csv
 import argparse
 import pandas as pd
 from pathlib import Path
+
+import torch
+
 from ultralytics import YOLO
 import logging
 
@@ -115,6 +118,13 @@ def main():
     name_to_id = load_category_mapping('../src/category_mapping.csv')
     logger.error(f"已加载 {len(name_to_id)} 个类别映射")
     logger.error("")
+
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        gpu_name = torch.cuda.get_device_name(device)
+        logger.error('Running on GPU: {}'.format(gpu_name))
+    else:
+        logger.error('Running on CPU')
 
     # 加载模型
     logger.error("加载模型...")
