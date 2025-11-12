@@ -27,7 +27,7 @@ from ultralytics import YOLO
 import logging
 
 # 配置日志记录器
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -103,10 +103,10 @@ def main():
 
     args = parser.parse_args()
 
-    logger.error(f'测试集目录: {args.test_img_dir}')
-    logger.error(f'输出文件: {args.output_path}')
+    logger.info(f'测试集目录: {args.test_img_dir}')
+    logger.info(f'输出文件: {args.output_path}')
 
-    logger.error("")
+    logger.info("")
 
     # 检查路径
     if not os.path.exists(args.test_img_dir):
@@ -114,40 +114,40 @@ def main():
         return
 
     # 加载类别映射
-    logger.error("加载类别映射...")
+    logger.info("加载类别映射...")
     name_to_id = load_category_mapping('../src/category_mapping.csv')
-    logger.error(f"已加载 {len(name_to_id)} 个类别映射")
-    logger.error("")
+    logger.info(f"已加载 {len(name_to_id)} 个类别映射")
+    logger.info("")
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     if torch.cuda.is_available():
         gpu_name = torch.cuda.get_device_name(device)
-        logger.error('Running on GPU: {}'.format(gpu_name))
+        logger.info('Running on GPU: {}'.format(gpu_name))
     else:
-        logger.error('Running on CPU')
+        logger.info('Running on CPU')
 
     # 加载模型
-    logger.error("加载模型...")
+    logger.info("加载模型...")
     model = YOLO('../model/runs/classify/train/weights/best.pt')
-    logger.error("模型加载完成")
-    logger.error("")
+    logger.info("模型加载完成")
+    logger.info("")
 
     # 获取图片文件
-    logger.error("扫描测试集目录...")
+    logger.info("扫描测试集目录...")
     image_files = get_image_files(args.test_img_dir)
 
     if not image_files:
         logger.error(f"错误: 在目录 {args.test_img_dir} 中未找到图片文件")
         return
 
-    logger.error(f"找到 {len(image_files)} 张图片")
-    logger.error("")
+    logger.info(f"找到 {len(image_files)} 张图片")
+    logger.info("")
 
     # 批量预测
-    logger.error("开始预测...")
+    logger.info("开始预测...")
     predictions = predict_images(model, args.test_img_dir, image_files, name_to_id)
-    logger.error(f"预测完成，成功预测 {len(predictions)} 张图片")
-    logger.error("")
+    logger.info(f"预测完成，成功预测 {len(predictions)} 张图片")
+    logger.info("")
 
     # 保存结果
     results_df = pd.DataFrame(predictions)
@@ -156,19 +156,19 @@ def main():
     output_dir = os.path.dirname(args.output_path)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
-        logger.error(f"创建输出目录: {output_dir}")
+        logger.info(f"创建输出目录: {output_dir}")
 
     results_df.to_csv(args.output_path, index=False)
-    logger.error(f"预测结果已保存到: {args.output_path}")
-    logger.error("")
+    logger.info(f"预测结果已保存到: {args.output_path}")
+    logger.info("")
 
     # 显示统计信息
-    logger.error("预测统计:")
-    logger.error(f"  总图片数: {len(image_files)}")
-    logger.error(f"  成功预测: {len(predictions)}")
-    logger.error(f"  平均置信度: {results_df['confidence'].mean():.4f}")
-    logger.error("")
-    logger.error("预测完成!")
+    logger.info("预测统计:")
+    logger.info(f"  总图片数: {len(image_files)}")
+    logger.info(f"  成功预测: {len(predictions)}")
+    logger.info(f"  平均置信度: {results_df['confidence'].mean():.4f}")
+    logger.info("")
+    logger.info("预测完成!")
 
 
 if __name__ == '__main__':
