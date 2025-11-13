@@ -87,7 +87,7 @@ def predict_images(model, img_dir, image_files, name_to_id):
             logger.error(f"错误: 预测 {filename} 失败 - {e}")
 
         # 显示进度
-        if i % 100 == 0:
+        if i % 1000 == 0:
             logger.error(f"已处理 {i}/{len(image_files)} 张图片...")
 
     return predictions
