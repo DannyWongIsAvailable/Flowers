@@ -66,7 +66,7 @@ def predict_images(model, img_dir, image_files, name_to_id):
         image_path = os.path.join(img_dir, filename)
 
         try:
-            results = model(image_path)
+            results = model(image_path, verbose=False)
 
             for result in results:
                 probs = result.probs
