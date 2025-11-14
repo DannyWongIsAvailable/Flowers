@@ -101,6 +101,7 @@ from .transformer import (
     TransformerEncoderLayer,
     TransformerLayer,
 )
+from .custom_heads import GeM, ArcMargin, FlowerHead  # 新增
 
 __all__ = (
     "AIFI",
@@ -179,4 +180,7 @@ __all__ = (
     "YOLOEDetect",
     "YOLOESegment",
     "v10Detect",
+    "GeM",
+    "ArcMargin",
+    "FlowerHead",
 )
