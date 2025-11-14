@@ -101,7 +101,19 @@ from .transformer import (
     TransformerEncoderLayer,
     TransformerLayer,
 )
-from .custom_heads import GeM, ArcMargin, FlowerHead  # 新增
+# 添加自定义模块导入
+from .custom_models import (
+    GeM,
+    ArcMargin,
+    FlowerHead,
+    FlowerAttention,
+    FlowerAttentionWrapper,
+    MultiScaleFlowerBlock,
+    MultiScaleFlowerBlockWrapper,
+    ColorEnhancedConv,
+    FlowerC3k2,
+    FlowerClassifyHead
+)
 
 __all__ = (
     "AIFI",
@@ -183,4 +195,11 @@ __all__ = (
     "GeM",
     "ArcMargin",
     "FlowerHead",
+    "FlowerAttention",
+    "FlowerAttentionWrapper",
+    "MultiScaleFlowerBlock",
+    "MultiScaleFlowerBlockWrapper",
+    "ColorEnhancedConv",
+    "FlowerC3k2",
+    "FlowerClassifyHead"
 )

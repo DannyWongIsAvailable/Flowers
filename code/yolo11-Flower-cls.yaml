@@ -1,0 +1,37 @@
+# Ultralytics YOLO11-cls-m for 100-class Flower Classification
+# 针对100类花卉分类任务的优化配置
+# Optimized for fine-grained flower classification
+
+# Parameters
+nc: 100  # 花卉类别数
+scales:
+  m: [0.50, 1.00, 512]  # 使用medium规模
+
+# Backbone - 花卉特征提取优化
+backbone:
+  # [from, repeats, module, args]
+
+  # Stage 1: 初始特征提取（使用颜色增强卷积）
+  - [-1, 1, ColorEnhancedConv, [64, 3, 2]]  # 0-P1/2  增强RGB特征
+  - [-1, 1, Conv, [128, 3, 2]]               # 1-P2/4
+
+  # Stage 2: 浅层纹理特征（细节纹理）
+  - [-1, 2, C3k2, [256, False, 0.25]]        # 2  保持轻量
+  - [-1, 1, FlowerAttention, [256]]          # 3  添加花卉注意力
+
+  # Stage 3: 中层结构特征（花瓣形态）
+  - [-1, 1, Conv, [256, 3, 2]]               # 4-P3/8
+  - [-1, 2, FlowerC3k2, [512, False, 0.25]]  # 5  花卉优化版C3k2
+
+  # Stage 4: 多尺度特征融合（关键层）
+  - [-1, 1, Conv, [512, 3, 2]]               # 6-P4/16
+  - [-1, 2, MultiScaleFlowerBlock, [512, True]]  # 7  多尺度花卉特征
+
+  # Stage 5: 高层语义特征（整体形态+颜色）
+  - [-1, 1, Conv, [1024, 3, 2]]              # 8-P5/32
+  - [-1, 2, MultiScaleFlowerBlock, [1024, True]]  # 9  深层多尺度
+  - [-1, 1, FlowerAttention, [1024]]         # 10  最终注意力
+
+# Head - 花卉分类头
+head:
+  - [-1, 1, FlowerClassifyHead, [nc]]  # 使用自定义分类头
